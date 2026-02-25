@@ -1,73 +1,85 @@
-# React + TypeScript + Vite
+# ClipSuit
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+ClipSuit is a Chrome extension for capturing, storing, and quickly reusing code snippets directly from the browser. It supports automatic snippet capture on copy events and manual saving through a context menu, with a lightweight React popup for search and snippet management.
 
-Currently, two official plugins are available:
+## Core Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Automatic snippet capture on browser copy events.
+- Manual snippet save from page context menu (`Save to ClipSuit`).
+- Local-first storage using IndexedDB (via Dexie) with no backend dependency.
+- Search snippets by content in real time.
+- One-click snippet copy from the extension popup.
+- Snippet deletion with a 5-second undo window.
+- Storage cap management with clear limit warnings (20 snippets max).
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Application
 
-## Expanding the ESLint configuration
+- React 19
+- TypeScript 5
+- Chrome Extension Manifest V3
+- IndexedDB with Dexie
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Build and Tooling
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Vite 7
+- `@crxjs/vite-plugin` for Chrome extension bundling
+- Tailwind CSS 3 + PostCSS + Autoprefixer
+- ESLint 9 with TypeScript and React Hooks rules
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Project Structure
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- `src/App.tsx`: Popup UI for viewing, searching, copying, deleting, and undoing snippet deletion.
+- `src/background.ts`: Service worker for context menu setup and snippet persistence.
+- `src/content.ts`: Content script that listens to copy events and sends save messages.
+- `src/db.ts`: Dexie database schema and snippet model.
+- `manifest.json`: Extension permissions, popup entry, service worker, and content script registration.
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- npm 9+
+- Google Chrome (or Chromium-based browser supporting Manifest V3)
+
+### Install Dependencies
+
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Run in Development
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+### Build for Production
+
+```bash
+npm run build
+```
+
+The production output is generated in the `dist` directory.
+
+## Load the Extension in Chrome
+
+1. Build the project with `npm run build`.
+2. Open `chrome://extensions`.
+3. Enable **Developer mode**.
+4. Click **Load unpacked**.
+5. Select the `dist` folder from this project.
+
+## Available Scripts
+
+- `npm run dev`: Start Vite development workflow.
+- `npm run build`: Type-check and build extension assets.
+- `npm run lint`: Run ESLint checks.
+- `npm run preview`: Preview the built popup app.
+
+## Notes
+
+- Snippets are stored locally in IndexedDB (`ClipSuitDB`) on the user’s machine.
+- The current storage limit is defined in `src/db.ts` (`MAX_SNIPPETS = 20`).
