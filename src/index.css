@@ -6,7 +6,11 @@
   html,
   body,
   #root {
-    @apply m-0 h-[600px] w-[400px] bg-slate-950 p-2 text-slate-100;
+    @apply m-0 h-[600px] w-[400px] bg-slate-900 p-0 text-slate-100;
+  }
+
+  #root {
+    @apply overflow-hidden rounded-2xl;
   }
 
   body {

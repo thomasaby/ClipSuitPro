@@ -1,6 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { db, MAX_SNIPPETS, type Snippet } from './db'
 
 function App() {
@@ -37,8 +35,7 @@ function App() {
 
     return snippets.filter((snippet) => {
       const contentMatch = snippet.content.toLowerCase().includes(lowerQuery)
-      const languageMatch = snippet.language.toLowerCase().includes(lowerQuery)
-      return contentMatch || languageMatch
+      return contentMatch
     })
   }, [query, snippets])
 
@@ -109,14 +106,6 @@ function App() {
     await loadSnippets()
   }
 
-  function toTitleCase(value: string): string {
-    if (!value) {
-      return 'Plaintext'
-    }
-
-    return value.charAt(0).toUpperCase() + value.slice(1)
-  }
-
   function formatDate(timestamp: number): string {
     return new Date(timestamp).toLocaleString()
   }
@@ -156,23 +145,14 @@ function App() {
             key={snippet.id}
             className="rounded-lg border border-slate-700 bg-slate-800/80 p-3"
           >
-            <div className="mb-2 flex items-center justify-between gap-2">
-              <span className="rounded bg-slate-700 px-2 py-1 text-xs font-medium text-slate-200">
-                {toTitleCase(snippet.language)}
-              </span>
+            <div className="mb-2 flex items-center justify-end gap-2">
               <time className="text-xs text-slate-400">{formatDate(snippet.timestamp)}</time>
             </div>
 
             <div className="mb-3 overflow-hidden rounded border border-slate-700">
-              <SyntaxHighlighter
-                language={snippet.language || 'text'}
-                style={oneDark}
-                customStyle={{ margin: 0, padding: '0.75rem', fontSize: '0.75rem' }}
-                wrapLongLines
-                showLineNumbers={false}
-              >
+              <pre className="m-0 whitespace-pre-wrap break-words p-3 text-xs text-slate-200">
                 {twoLinePreview(snippet.content)}
-              </SyntaxHighlighter>
+              </pre>
             </div>
 
             <div className="flex justify-end gap-2">
