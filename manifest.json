@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ClipSuit",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Capture, save, and browse code snippets locally.",
   "permissions": ["storage", "clipboardRead", "unlimitedStorage", "contextMenus"],
   "action": {
